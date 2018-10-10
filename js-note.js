@@ -44,7 +44,65 @@ var testPromise = function () {
     });
     console.log("end p!"); //2
 }
-testPromise();
+// testPromise();
+
+/**
+ * promise and async 和 await
+ */
+let fs = require('fs')
+let path = require('path')
+
+async function getFileStatus(filedir) {
+    return new Promise((resolve) => {
+        fs.stat(filedir, (eror, stats) => {
+            if (eror) {
+                console.warn('获取文件stats失败');
+            } else {
+                var isFile = stats.isFile(); //是文件
+                var isDir = stats.isDirectory(); //是文件夹
+                if (isFile) {
+                    const tinify = require("tinify");
+                    tinify.key = "LHJ97aF1mFgkrFSxYLJt4tdDwhJ7rPky";
+                    if (filedir.substring(filedir.length - 3) == 'png' || filedir.substring(filedir.length - 3) == 'jpg') {
+                        tinify.fromFile(filedir).toFile(filedir);
+                        Editor.log(filedir + " compress success!");
+                    }
+                }
+                resolve(isDir);
+            }
+        })
+    });
+}
+
+async function walkDir(filePath) {
+    fs.readdir(filePath, function (err, files) {
+        if (err) {
+            console.warn(err)
+        } else {
+            //遍历读取到的文件列表
+            for (let index = 0; index < files.length; index++) {
+                const filename = files[index];
+                //获取当前文件的绝对路径
+                var filedir = path.join(filePath, filename);
+                //根据文件路径获取文件信息，返回一个fs.Stats对象
+                getFileStatus(filedir);
+            }
+        }
+    });
+}
+async function testAsync(params) {
+    function timeout(params) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(1111);
+            }, 2000);
+        });
+    }
+    // await timeout();
+    await walkDir(process.cwd());
+    console.log("after timeout!");
+}
+// testAsync();
 
 /**
  * === === === === === === === === == JavaScript 执行机制 === === === === === === === ===
@@ -116,4 +174,25 @@ var arrConcatTest = function () {
     console.log("arr1========", arr1);
     console.log("arr2========", arr2);
 }
-arrConcatTest();
+// arrConcatTest();
+
+/**
+ * 数组去重
+ */
+
+
+/**
+ * 两个数交换位置
+ */
+
+var swapValue = function (a, b) {
+    a = a ^ b;
+    console.log("--a: ", a);
+
+    b = b ^ a;
+    a = a ^ b;
+    console.log("--a: ", a, "--b: ", b);
+}
+var a = 4
+var b = 7
+swapValue(a, b)
